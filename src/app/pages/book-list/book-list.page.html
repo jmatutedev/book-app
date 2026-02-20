@@ -1,0 +1,32 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/genres" />
+    </ion-buttons>
+    <ion-title>{{ genreLabel }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  @if (loading) {
+  <div class="book-list__spinner">
+    <ion-spinner name="crescent" />
+  </div>
+  } @if (!loading && emptyState) {
+  <app-empty-state [type]="emptyState" />
+  } @if (!loading && !emptyState) {
+  <ion-grid>
+    <ion-row>
+      @for (book of books; track book.id) {
+      <ion-col size="6" (click)="goToDetail(book)">
+        <app-book-card [book]="book" />
+      </ion-col>
+      }
+    </ion-row>
+  </ion-grid>
+
+  <ion-infinite-scroll (ionInfinite)="loadMore($event)">
+    <ion-infinite-scroll-content loadingSpinner="crescent" />
+  </ion-infinite-scroll>
+  }
+</ion-content>

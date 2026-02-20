@@ -3,80 +3,77 @@ import {
   CapacitorSQLite,
   SQLiteConnection,
   SQLiteDBConnection,
-  capSQLiteSet,
 } from '@capacitor-community/sqlite';
-import { Book } from '../../models/books/book.model';
+import { Capacitor } from '@capacitor/core';
+
+const DB_NAME = 'books_app.db';
 
 @Injectable({
   providedIn: 'root',
 })
-export class SqliteService {
+export class DatabaseService {
   private sqlite = new SQLiteConnection(CapacitorSQLite);
   private db!: SQLiteDBConnection;
-  private isReady: Promise<void>;
+
+  readonly ready: Promise<void>;
 
   constructor() {
-    this.isReady = this.init();
-  }
-
-  async ensureReady() {
-    await this.isReady;
+    this.ready = this.init();
   }
 
   private async init(): Promise<void> {
-    try {
-      // Configuración Web y detección de entorno
-      try {
-        await this.sqlite.initWebStore();
-      } catch {
-        console.log('Nativo detectado');
-      }
+    // En web no se inicializa nada
+    if (!Capacitor.isNativePlatform()) return;
 
-      const existing = await this.sqlite.isConnection('books.db', false);
-      if (existing.result) {
-        this.db = await this.sqlite.retrieveConnection('books.db', false);
-      } else {
-        this.db = await this.sqlite.createConnection(
-          'books.db',
+    const existing = await this.sqlite.isConnection(DB_NAME, false);
+    this.db = existing.result
+      ? await this.sqlite.retrieveConnection(DB_NAME, false)
+      : await this.sqlite.createConnection(
+          DB_NAME,
           false,
           'no-encryption',
           1,
           false,
         );
-      }
 
-      await this.db.open();
-
-      await this.db.execute(`
-        CREATE TABLE IF NOT EXISTS books (
-          id TEXT PRIMARY KEY,
-          data TEXT
-        );
-      `);
-      console.log('SQLite: Base de Datos y Tabla books listas');
-    } catch (error) {
-      console.error('Error inicializando SQLite:', error);
-    }
+    await this.db.open();
+    await this.createTables();
   }
 
-  async saveBooks(books: Book[]): Promise<void> {
-    await this.ensureReady();
-    const set: capSQLiteSet[] = books.map((b) => ({
-      statement: `INSERT OR REPLACE INTO books (id, data) VALUES (?, ?)`,
-      values: [b.id, JSON.stringify(b)],
-    }));
-    await this.db.executeSet(set);
+  private async createTables(): Promise<void> {
+    await this.db.execute(`
+      CREATE TABLE IF NOT EXISTS books (
+        id   TEXT PRIMARY KEY,
+        data TEXT NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS genre_books (
+        genre_id TEXT NOT NULL,
+        book_id  TEXT NOT NULL,
+        PRIMARY KEY (genre_id, book_id),
+        FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
+      );
+
+      CREATE TABLE IF NOT EXISTS custom_lists (
+        id   TEXT PRIMARY KEY,
+        name TEXT NOT NULL UNIQUE
+      );
+
+      CREATE TABLE IF NOT EXISTS list_books (
+        list_id TEXT NOT NULL,
+        book_id TEXT NOT NULL,
+        PRIMARY KEY (list_id, book_id),
+        FOREIGN KEY (list_id) REFERENCES custom_lists(id) ON DELETE CASCADE,
+        FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
+      );
+    `);
   }
 
-  async getAllBooks(): Promise<Book[]> {
-    await this.ensureReady();
-    const res = await this.db.query(`SELECT data FROM books`);
-    if (!res.values) return [];
-    return res.values.map((r) => JSON.parse(r.data));
+  isAvailable(): boolean {
+    return Capacitor.isNativePlatform();
   }
 
-  async clearBooks(): Promise<void> {
-    await this.ensureReady();
-    await this.db.execute(`DELETE FROM books`);
+  getDb(): SQLiteDBConnection {
+    return this.db;
   }
 }

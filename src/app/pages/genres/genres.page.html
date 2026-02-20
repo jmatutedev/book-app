@@ -1,0 +1,15 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Géneros</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    @for (genre of genres; track genre.id) {
+    <ion-item button (click)="goToBooks(genre)" detail>
+      <ion-label>{{ genre.label }}</ion-label>
+    </ion-item>
+    }
+  </ion-list>
+</ion-content>

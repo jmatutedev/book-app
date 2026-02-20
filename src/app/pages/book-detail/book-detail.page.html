@@ -1,0 +1,51 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button />
+    </ion-buttons>
+    <ion-title>Detalle</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  @if (loading) {
+  <div class="book-detail__spinner">
+    <ion-spinner name="crescent" />
+  </div>
+  } @if (!loading && error) {
+  <app-empty-state type="error" message="No se pudo cargar el libro." />
+  } @if (!loading && book) {
+  <div class="book-detail__cover">
+    @if (coverUrl && !imageError) { @if (!imageLoaded) {
+    <ion-skeleton-text animated class="book-detail__skeleton" />
+    }
+    <img
+      [src]="coverUrl"
+      [alt]="book.title"
+      class="book-detail__img"
+      [class.book-detail__img--hidden]="!imageLoaded"
+      (load)="onImageLoad()"
+      (error)="onImageError()"
+    />
+    } @else {
+    <div class="book-detail__placeholder">Sin portada</div>
+    }
+  </div>
+
+  <div class="book-detail__body">
+    <h1 class="book-detail__title">{{ book.title }}</h1>
+    <p class="book-detail__authors">{{ authorsLabel }}</p>
+
+    @if (book.first_publish_year) {
+    <p class="book-detail__year">{{ book.first_publish_year }}</p>
+    } @if (book.description) {
+    <p class="book-detail__description">{{ book.description }}</p>
+    }
+
+    <ion-button expand="block" (click)="addToList()">
+      <ion-icon slot="start" name="bookmark-outline" />
+      Agregar a lista
+    </ion-button>
+  </div>
+  }
+</ion-content>

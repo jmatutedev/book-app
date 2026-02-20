@@ -1,0 +1,78 @@
+.book-card {
+  margin: 4px;
+  height: 260px;
+  display: flex;
+  flex-direction: column;
+
+  &__cover {
+    position: relative;
+    width: 100%;
+    height: 160px;
+    flex-shrink: 0;
+    overflow: hidden;
+    background: var(--ion-color-light);
+  }
+
+  &__skeleton {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+  }
+
+  &__img {
+    width: 100%;
+    height: 100%;
+    display: block;
+
+    &--hidden {
+      opacity: 0;
+      position: absolute;
+    }
+  }
+
+  &__placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ion-color-medium);
+    font-size: 12px;
+  }
+
+  &__info {
+    padding: 8px;
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__title {
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+  }
+
+  &__author {
+    font-size: 11px;
+    color: var(--ion-color-medium);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__year {
+    font-size: 11px;
+    color: var(--ion-color-medium);
+    margin: 0;
+  }
+}

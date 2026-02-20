@@ -1,0 +1,26 @@
+<ion-card button class="book-card">
+  <div class="book-card__cover">
+    @if (!imageLoaded && coverUrl && !imageError) {
+      <ion-skeleton-text animated class="book-card__skeleton" />
+    }
+
+    @if (coverUrl && !imageError) {
+      <img
+        [src]="coverUrl"
+        [alt]="book.title"
+        class="book-card__img"
+        [class.book-card__img--hidden]="!imageLoaded"
+        (load)="onImageLoad()"
+        (error)="onImageError()"
+      />
+    } @else {
+      <div class="book-card__placeholder">Sin portada</div>
+    }
+  </div>
+
+  <div class="book-card__info">
+    <p class="book-card__title">{{ book.title }}</p>
+    <p class="book-card__author">{{ authorsLabel }}</p>
+    <p class="book-card__year">{{ book.first_publish_year ?? "" }}</p>
+  </div>
+</ion-card>
