@@ -23,8 +23,6 @@ git clone https://github.com/jmatutedev/book-app.git
 cd book-app
 ```
 
-```
-
 2. **Instalar dependencias**:
 ```bash
 npm install
