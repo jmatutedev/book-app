@@ -12,8 +12,9 @@ import {
 import { addIcons } from 'ionicons';
 import { trashOutline } from 'ionicons/icons';
 import { Book } from '../../../core/models/books/book.model';
-import { LocalListsService } from '../../../core/services/web-list/web-lists.service';
+import { StorageFacadeService } from '../../../core/services/storage/storage-facade.service';
 import { AppHeaderComponent } from '../../../core/components/header/header.component';
+import { toWorkSlug } from '../../../core/utils/open-library-id.util';
 
 @Component({
   selector: 'app-list-detail',
@@ -30,7 +31,7 @@ export class ListDetailPage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private localListsService: LocalListsService,
+    private storage: StorageFacadeService,
     private alertCtrl: AlertController,
     private toastCtrl: ToastController,
   ) {
@@ -44,7 +45,7 @@ export class ListDetailPage implements OnInit {
   }
 
   async loadBooks(): Promise<void> {
-    this.books = await this.localListsService.getBooksInList(this.listId);
+    this.books = await this.storage.getBooksInList(this.listId);
   }
 
   async removeBook(book: Book, event: Event): Promise<void> {
@@ -58,7 +59,7 @@ export class ListDetailPage implements OnInit {
           text: 'Eliminar',
           role: 'destructive',
           handler: async () => {
-            await this.localListsService.removeBookFromList(
+            await this.storage.removeBookFromList(
               this.listId,
               book.id,
             );
@@ -82,7 +83,7 @@ export class ListDetailPage implements OnInit {
   }
 
   goToDetail(book: Book): void {
-    this.router.navigate(['/book-detail', book.id.replace('/works/', '')], {
+    this.router.navigate(['/book-detail', toWorkSlug(book.id)], {
       state: { fromList: true },
     });
   }

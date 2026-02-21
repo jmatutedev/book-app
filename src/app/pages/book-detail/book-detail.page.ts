@@ -16,7 +16,7 @@ import { BookSyncService } from '../../core/services/book-sync/book-sync.service
 import { NetworkService } from '../../core/services/network/network.service';
 import { Book } from '../../core/models/books/book.model';
 import { EmptyStateComponent } from '../../core/components/empty-state/empty-state.component';
-import { LocalListsService } from '../../core/services/web-list/web-lists.service';
+import { StorageFacadeService } from '../../core/services/storage/storage-facade.service';
 import { AddedToListModalComponent } from '../../core/components/list-modal/list-modal.component';
 import { AppHeaderComponent } from '../../core/components/header/header.component';
 
@@ -39,13 +39,13 @@ const COVER_BASE = 'https://covers.openlibrary.org/b/id';
 })
 export class BookDetailPage implements OnInit, OnDestroy {
   book: Book | null = null;
-  loading = false;
-  error = false;
-  imageLoaded = false;
-  imageError = false;
+  loading: boolean = false;
+  error: boolean = false;
+  imageLoaded: boolean = false;
+  imageError: boolean = false;
 
   // Oculta el botón si venimos desde list-detail
-  fromList = false;
+  fromList: boolean = false;
 
   private bookId!: string;
   private networkSub!: Subscription;
@@ -54,7 +54,7 @@ export class BookDetailPage implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private bookSync: BookSyncService,
-    private localListsService: LocalListsService,
+    private storage: StorageFacadeService,
     private network: NetworkService,
     private alertCtrl: AlertController,
     private modalCtrl: ModalController,
@@ -112,7 +112,7 @@ export class BookDetailPage implements OnInit, OnDestroy {
   async addToList(): Promise<void> {
     if (!this.book) return;
 
-    const lists = await this.localListsService.getLists();
+    const lists = await this.storage.getLists();
 
     if (!lists.length) {
       const alert = await this.alertCtrl.create({
@@ -144,7 +144,7 @@ export class BookDetailPage implements OnInit, OnDestroy {
           handler: async (listId: string) => {
             if (!listId || !this.book) return;
 
-            const alreadyIn = await this.localListsService.isBookInList(
+            const alreadyIn = await this.storage.isBookInList(
               listId,
               this.book.id,
             );
@@ -158,7 +158,7 @@ export class BookDetailPage implements OnInit, OnDestroy {
               return;
             }
 
-            await this.localListsService.addBookToList(listId, this.book);
+            await this.storage.addBookToList(listId, this.book);
 
             const list = lists.find((l) => l.id === listId)!;
 

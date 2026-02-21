@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { OpenLibraryService } from '../api/open-library.service';
-import { BooksDbService } from '../database/books-db.service';
 import { NetworkService } from '../network/network.service';
 import { Book } from '../../models/books/book.model';
+import { StorageFacadeService } from '../storage/storage-facade.service';
+import { toWorkKey } from '../../utils/open-library-id.util';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +16,7 @@ export class BookSyncService {
 
   constructor(
     private api: OpenLibraryService,
-    private booksDb: BooksDbService,
+    private storage: StorageFacadeService,
     private network: NetworkService,
   ) {}
 
@@ -26,11 +27,11 @@ export class BookSyncService {
     if (this.network.isOnline()) {
       const books = await this.api.fetchBooksByGenre(genreId, page);
       this.genreCache.set(key, books);
-      if (this.isNative) await this.booksDb.saveBooksForGenre(genreId, books);
+      if (this.isNative) await this.storage.saveBooksForGenre(genreId, books);
       return books;
     }
 
-    if (this.isNative) return this.booksDb.getBooksByGenre(genreId);
+    if (this.isNative) return this.storage.getBooksByGenre(genreId);
     return [];
   }
 
@@ -42,19 +43,21 @@ export class BookSyncService {
   }
 
   async getBookDetail(bookId: string): Promise<Book | null> {
-    if (this.detailCache.has(bookId)) return this.detailCache.get(bookId)!;
+    const workKey = toWorkKey(bookId);
+    if (this.detailCache.has(workKey)) return this.detailCache.get(workKey)!;
 
     if (this.network.isOnline()) {
       try {
-        const book = await this.api.fetchBookDetail(bookId);
-        this.detailCache.set(bookId, book);
+        const book = await this.api.fetchBookDetail(workKey);
+        if (this.isNative) await this.storage.saveBook(book);
+        this.detailCache.set(workKey, book);
         return book;
-      } catch {
-        // Si la API falla intentamos SQLite en nativo
+      } catch (error) {
+        console.warn('No se pudo obtener el detalle desde API. Se intenta fallback local.', error);
       }
     }
 
-    if (this.isNative) return this.booksDb.getBookById(bookId);
+    if (this.isNative) return this.storage.getBookById(workKey);
     return null;
   }
 }

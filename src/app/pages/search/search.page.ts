@@ -19,6 +19,7 @@ import {
   EmptyStateType,
 } from '../../core/components/empty-state/empty-state.component';
 import { AppHeaderComponent } from '../../core/components/header/header.component';
+import { toWorkSlug } from '../../core/utils/open-library-id.util';
 
 const PAGE_SIZE = 20;
 
@@ -42,11 +43,11 @@ const PAGE_SIZE = 20;
   ],
 })
 export class SearchPage {
-  query = '';
+  query: string = '';
   books: Book[] = [];
-  page = 1;
+  page: number = 1;
 
-  loading = false;
+  loading: boolean = false;
   emptyState: EmptyStateType | null = null;
 
   constructor(
@@ -115,6 +116,6 @@ export class SearchPage {
 
   goToDetail(book: Book): void {
     (document.activeElement as HTMLElement)?.blur();
-    this.router.navigate(['/book-detail', book.id.replace('/works/', '')]);
+    this.router.navigate(['/book-detail', toWorkSlug(book.id)]);
   }
 }

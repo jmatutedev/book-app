@@ -1,23 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import {
+  AlertController,
   IonContent,
-  IonList,
-  IonItem,
-  IonLabel,
-  IonIcon,
   IonFab,
   IonFabButton,
-  AlertController,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonList,
   ToastController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { addOutline, createOutline, trashOutline } from 'ionicons/icons';
-import { CustomList } from '../../core/models/custom-list/custom-list.model';
-import { LocalListsService } from '../../core/services/web-list/web-lists.service';
 import { AppHeaderComponent } from '../../core/components/header/header.component';
+import { CustomList } from '../../core/models/custom-list/custom-list.model';
+import { StorageFacadeService } from '../../core/services/storage/storage-facade.service';
+import { getMaxLists } from '../../core/utils/list-name-validation.util';
 
-const MAX_LISTS = 3;
+const MAX_LISTS = getMaxLists();
 
 @Component({
   selector: 'app-custom-lists',
@@ -39,7 +40,7 @@ export class CustomListsPage implements OnInit {
   lists: CustomList[] = [];
 
   constructor(
-    private localListsService: LocalListsService,
+    private storage: StorageFacadeService,
     private alertCtrl: AlertController,
     private router: Router,
     private toastCtrl: ToastController,
@@ -56,7 +57,7 @@ export class CustomListsPage implements OnInit {
   }
 
   async loadLists(): Promise<void> {
-    this.lists = await this.localListsService.getLists();
+    this.lists = await this.storage.getLists();
   }
 
   async createList(): Promise<void> {
@@ -85,17 +86,17 @@ export class CustomListsPage implements OnInit {
         {
           text: 'Crear',
           handler: async (data) => {
-            const name = data.name?.trim();
-            if (!name) {
-              this.showNameError();
+            try {
+              await this.storage.createList({
+                id: Date.now().toString(),
+                name: data.name ?? '',
+              });
+              await this.loadLists();
+              return true;
+            } catch (error) {
+              await this.showNameError((error as Error).message);
               return false;
             }
-            await this.localListsService.createList({
-              id: Date.now().toString(),
-              name,
-            });
-            await this.loadLists();
-            return true;
           },
         },
       ],
@@ -120,14 +121,14 @@ export class CustomListsPage implements OnInit {
         {
           text: 'Guardar',
           handler: async (data) => {
-            const name = data.name?.trim();
-            if (!name) {
-              this.showNameError();
+            try {
+              await this.storage.updateListName(list.id, data.name ?? '');
+              await this.loadLists();
+              return true;
+            } catch (error) {
+              await this.showNameError((error as Error).message);
               return false;
             }
-            await this.localListsService.updateListName(list.id, name);
-            await this.loadLists();
-            return true;
           },
         },
       ],
@@ -146,7 +147,7 @@ export class CustomListsPage implements OnInit {
           text: 'Eliminar',
           role: 'destructive',
           handler: async () => {
-            await this.localListsService.deleteList(list.id);
+            await this.storage.deleteList(list.id);
             await this.loadLists();
             await this.showDeletedToast(list.name);
           },
@@ -166,10 +167,10 @@ export class CustomListsPage implements OnInit {
     await toast.present();
   }
 
-  private async showNameError(): Promise<void> {
+  private async showNameError(message: string): Promise<void> {
     const alert = await this.alertCtrl.create({
-      header: 'Nombre invalido',
-      message: 'El nombre no puede estar vacio.',
+      header: 'Nombre inválido',
+      message,
       buttons: ['OK'],
     });
     await alert.present();

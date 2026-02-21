@@ -7,7 +7,8 @@ import { NetworkService } from '../../services/network/network.service';
 
 @Component({
   selector: 'app-network-toast',
-  template: '',
+  templateUrl: './network-toast.component.html',
+  styleUrls: ['./network-toast.component.scss'],
   standalone: true,
   imports: [],
 })

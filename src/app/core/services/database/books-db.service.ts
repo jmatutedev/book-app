@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DatabaseService } from './sqlite.service';
 import { Book } from '../../models/books/book.model';
+import { toWorkKey } from '../../utils/open-library-id.util';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +16,10 @@ export class BooksDbService {
 
     const statements = books.map((book) => ({
       statement: `INSERT OR REPLACE INTO books (id, data) VALUES (?, ?)`,
-      values: [book.id, JSON.stringify(book)],
+      values: [
+        toWorkKey(book.id),
+        JSON.stringify({ ...book, id: toWorkKey(book.id) }),
+      ],
     }));
     await db.executeSet(statements);
   }
@@ -25,7 +29,9 @@ export class BooksDbService {
     await this.databaseService.ready;
     const db = this.databaseService.getDb();
 
-    const res = await db.query(`SELECT data FROM books WHERE id = ?`, [bookId]);
+    const res = await db.query(`SELECT data FROM books WHERE id = ?`, [
+      toWorkKey(bookId),
+    ]);
     if (!res.values?.length) return null;
     return JSON.parse(res.values[0].data);
   }
@@ -37,7 +43,7 @@ export class BooksDbService {
 
     const relations = books.map((book) => ({
       statement: `INSERT OR IGNORE INTO genre_books (genre_id, book_id) VALUES (?, ?)`,
-      values: [genreId, book.id],
+      values: [genreId, toWorkKey(book.id)],
     }));
     await db.executeSet(relations);
   }

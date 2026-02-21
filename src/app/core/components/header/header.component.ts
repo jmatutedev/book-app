@@ -18,9 +18,9 @@ import { NetworkService } from '../../services/network/network.service';
 })
 export class AppHeaderComponent implements OnInit, OnDestroy {
   @Input({ required: true }) title!: string;
-  @Input() showBackButton = false;
+  @Input() showBackButton: boolean = false;
 
-  isOnline = true;
+  isOnline: boolean = true;
   private networkSub!: Subscription;
 
   constructor(private network: NetworkService) {}

@@ -19,6 +19,7 @@ import {
   EmptyStateType,
 } from '../../core/components/empty-state/empty-state.component';
 import { AppHeaderComponent } from '../../core/components/header/header.component';
+import { toWorkSlug } from '../../core/utils/open-library-id.util';
 const PAGE_SIZE = 20;
 
 @Component({
@@ -44,7 +45,7 @@ export class BookListPage implements OnInit, OnDestroy {
   genreLabel!: string;
 
   books: Book[] = [];
-  page = 1;
+  page: number = 1;
 
   loading = false;
   emptyState: EmptyStateType | null = null;
@@ -123,6 +124,6 @@ export class BookListPage implements OnInit, OnDestroy {
 
   goToDetail(book: Book): void {
     (document.activeElement as HTMLElement)?.blur();
-    this.router.navigate(['/book-detail', book.id.replace('/works/', '')]);
+    this.router.navigate(['/book-detail', toWorkSlug(book.id)]);
   }
 }

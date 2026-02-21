@@ -2,8 +2,10 @@ import { Injectable } from '@angular/core';
 import { DatabaseService } from './sqlite.service';
 import { CustomList } from '../../models/custom-list/custom-list.model';
 import { Book } from '../../models/books/book.model';
-
-const MAX_LISTS = 3;
+import {
+  canCreateMoreLists,
+  validateListName,
+} from '../../utils/list-name-validation.util';
 
 @Injectable({
   providedIn: 'root',
@@ -26,10 +28,13 @@ export class CustomListsDbService {
     await this.databaseService.ready;
     const db = this.databaseService.getDb();
 
-    const count = await db.query(`SELECT COUNT(*) as total FROM custom_lists`);
-    const total = count.values?.[0]?.total ?? 0;
-    if (total >= MAX_LISTS)
-      throw new Error(`No puedes crear más de ${MAX_LISTS} listas.`);
+    const lists = await this.getLists();
+    if (!canCreateMoreLists(lists)) {
+      throw new Error('No puedes crear más de 3 listas.');
+    }
+
+    const validationError = validateListName(list.name, lists);
+    if (validationError) throw new Error(validationError);
 
     await db.run(`INSERT INTO custom_lists (id, name) VALUES (?, ?)`, [
       list.id,
@@ -41,6 +46,11 @@ export class CustomListsDbService {
     if (!this.databaseService.isAvailable()) return;
     await this.databaseService.ready;
     const db = this.databaseService.getDb();
+
+    const lists = await this.getLists();
+    const validationError = validateListName(newName, lists, listId);
+    if (validationError) throw new Error(validationError);
+
     await db.run(`UPDATE custom_lists SET name = ? WHERE id = ?`, [
       newName.trim(),
       listId,
@@ -106,3 +116,4 @@ export class CustomListsDbService {
     return (res.values?.length ?? 0) > 0;
   }
 }
+
