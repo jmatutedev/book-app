@@ -1,4 +1,41 @@
 .book-list {
+  &__intro {
+    padding: 4px;
+    margin-bottom: 12px;
+  }
+
+  &__eyebrow {
+    margin: 0 0 8px;
+    color: var(--app-accent);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 24px;
+    line-height: 1.2;
+    font-weight: 700;
+    color: var(--app-text);
+  }
+
+  &__subtitle {
+    margin: 10px 0 0;
+    color: var(--app-muted);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  &__grid {
+    padding: 0;
+  }
+
+  &__col {
+    padding: 2px;
+  }
+
   &__spinner {
     display: flex;
     justify-content: center;

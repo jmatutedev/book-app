@@ -1,10 +1,6 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
 import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
   IonSearchbar,
   IonGrid,
@@ -22,7 +18,7 @@ import {
   EmptyStateComponent,
   EmptyStateType,
 } from '../../core/components/empty-state/empty-state.component';
-import { AppHeaderComponent } from 'src/app/core/components/header/header.component';
+import { AppHeaderComponent } from '../../core/components/header/header.component';
 
 const PAGE_SIZE = 20;
 
@@ -45,7 +41,7 @@ const PAGE_SIZE = 20;
     AppHeaderComponent,
   ],
 })
-export class SearchPage implements OnDestroy {
+export class SearchPage {
   query = '';
   books: Book[] = [];
   page = 1;
@@ -53,19 +49,12 @@ export class SearchPage implements OnDestroy {
   loading = false;
   emptyState: EmptyStateType | null = null;
 
-  private networkSub!: Subscription;
-
   constructor(
     private router: Router,
     private bookSync: BookSyncService,
     private network: NetworkService,
   ) {}
 
-  ngOnDestroy(): void {
-    this.networkSub?.unsubscribe();
-  }
-
-  // Dispara con Enter del teclado nativo o con el botón de búsqueda
   onSearch(event: any): void {
     const value = event.detail.value?.trim() ?? '';
     if (!value || value === this.query) return;

@@ -2,12 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
-  IonBackButton,
-  IonButtons,
   IonGrid,
   IonRow,
   IonCol,

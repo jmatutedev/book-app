@@ -1,0 +1,14 @@
+.tabs__bar {
+  --background: var(--app-surface);
+  --border: 1px solid var(--app-border);
+  padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
+}
+
+.tabs__button {
+  --color: var(--app-muted);
+  --color-selected: var(--app-accent);
+  --ripple-color: rgba(0, 87, 184, 0.18);
+  min-height: 56px;
+  border-radius: 10px;
+  font-weight: 600;
+}

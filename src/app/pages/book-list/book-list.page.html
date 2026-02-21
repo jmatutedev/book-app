@@ -1,6 +1,20 @@
-<app-header title="Libros" [showBackButton]="true"></app-header>
+<app-header [title]="genreLabel || 'Libros'" [showBackButton]="true"></app-header>
 
 <ion-content>
+  <section class="book-list__intro">
+    <p class="book-list__eyebrow">Catalogo por genero</p>
+    <h1 class="book-list__title">{{ genreLabel || 'Libros' }}</h1>
+    <p class="book-list__subtitle">
+      @if (loading) {
+        Cargando libros de este genero.
+      } @else if (books.length) {
+        {{ books.length }} libro(s) cargados. Toca un libro para ver su detalle.
+      } @else {
+        Explora este genero y selecciona un libro para ver su detalle.
+      }
+    </p>
+  </section>
+
   @if (loading) {
   <div class="book-list__spinner">
     <ion-spinner name="crescent" />
@@ -8,10 +22,10 @@
   } @if (!loading && emptyState) {
   <app-empty-state [type]="emptyState" />
   } @if (!loading && !emptyState) {
-  <ion-grid>
+  <ion-grid class="book-list__grid">
     <ion-row>
       @for (book of books; track book.id) {
-      <ion-col size="6" (click)="goToDetail(book)">
+      <ion-col size="6" class="book-list__col" (click)="goToDetail(book)">
         <app-book-card [book]="book" />
       </ion-col>
       }

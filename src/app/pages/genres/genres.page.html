@@ -1,10 +1,31 @@
-<app-header title="Géneros" />
+<app-header title="Generos" />
 
 <ion-content>
-  <ion-list>
+  <section class="genres-page__intro">
+    <p class="genres-page__eyebrow">Biblioteca</p>
+    <h1 class="genres-page__title">Explora por categoria</h1>
+    <p class="genres-page__subtitle">
+      Selecciona un genero para ver una lista de libros recomendados.
+    </p>
+  </section>
+
+  <ion-list lines="none">
     @for (genre of genres; track genre.id) {
-    <ion-item button (click)="goToBooks(genre)" detail>
-      <ion-label>{{ genre.label }}</ion-label>
+    <ion-item
+      button
+      detail="false"
+      class="genres-page__item"
+      (click)="goToBooks(genre)"
+    >
+      <ion-label class="genres-page__item-label">
+        <h2>{{ genre.label }}</h2>
+        <p>Ver catalogo</p>
+      </ion-label>
+      <ion-icon
+        slot="end"
+        name="chevron-forward-outline"
+        class="genres-page__item-icon"
+      />
     </ion-item>
     }
   </ion-list>

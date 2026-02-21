@@ -1,16 +1,16 @@
-<ion-header>
-  <ion-toolbar>
+<ion-header class="app-header">
+  <ion-toolbar class="app-header__toolbar">
     @if (showBackButton) {
       <ion-buttons slot="start">
         <ion-back-button defaultHref="/" />
       </ion-buttons>
     }
-    <ion-title>{{ title }}</ion-title>
+    <ion-title class="app-header__title">{{ title }}</ion-title>
   </ion-toolbar>
 
   @if (!isOnline) {
     <div class="offline-banner">
-      <span>Sin conexión a internet</span>
+      <span>Sin conexion a internet</span>
     </div>
   }
 </ion-header>

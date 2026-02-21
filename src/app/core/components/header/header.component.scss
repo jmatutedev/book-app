@@ -1,8 +1,22 @@
+.app-header {
+  &__toolbar {
+    --min-height: 62px;
+    --padding-start: 14px;
+    --padding-end: 14px;
+    border-bottom: 1px solid var(--app-border);
+  }
+
+  &__title {
+    font-size: 18px;
+  }
+}
+
 .offline-banner {
-  background: var(--ion-color-warning);
-  color: var(--ion-color-warning-contrast);
+  background: var(--app-banner-bg);
+  color: var(--app-text);
   text-align: center;
   font-size: 13px;
-  font-weight: 500;
-  padding: 4px 16px;
+  font-weight: 600;
+  padding: 6px 16px;
+  border-bottom: 1px solid var(--app-border);
 }

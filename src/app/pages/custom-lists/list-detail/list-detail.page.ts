@@ -1,18 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
-  IonBackButton,
-  IonButtons,
   IonList,
   IonItem,
   IonLabel,
   IonIcon,
-  IonText,
   AlertController,
+  ToastController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { trashOutline } from 'ionicons/icons';
@@ -25,15 +20,7 @@ import { AppHeaderComponent } from '../../../core/components/header/header.compo
   templateUrl: './list-detail.page.html',
   styleUrls: ['./list-detail.page.scss'],
   standalone: true,
-  imports: [
-    IonContent,
-    IonList,
-    IonItem,
-    IonLabel,
-    IonIcon,
-    IonText,
-    AppHeaderComponent,
-  ],
+  imports: [IonContent, IonList, IonItem, IonLabel, IonIcon, AppHeaderComponent],
 })
 export class ListDetailPage implements OnInit {
   listId!: string;
@@ -45,6 +32,7 @@ export class ListDetailPage implements OnInit {
     private router: Router,
     private localListsService: LocalListsService,
     private alertCtrl: AlertController,
+    private toastCtrl: ToastController,
   ) {
     addIcons({ trashOutline });
   }
@@ -63,7 +51,7 @@ export class ListDetailPage implements OnInit {
     event.stopPropagation();
     const alert = await this.alertCtrl.create({
       header: 'Eliminar libro',
-      message: `¿Querés quitar "${book.title}" de esta lista?`,
+      message: `Quieres quitar "${book.title}" de esta lista?`,
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
         {
@@ -75,11 +63,22 @@ export class ListDetailPage implements OnInit {
               book.id,
             );
             await this.loadBooks();
+            await this.showRemovedBookToast(book.title);
           },
         },
       ],
     });
     await alert.present();
+  }
+
+  private async showRemovedBookToast(bookTitle: string): Promise<void> {
+    const toast = await this.toastCtrl.create({
+      message: `Se elimino "${bookTitle}" de la lista.`,
+      duration: 2200,
+      position: 'bottom',
+      color: 'success',
+    });
+    await toast.present();
   }
 
   goToDetail(book: Book): void {

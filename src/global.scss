@@ -34,4 +34,76 @@
 
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import '@ionic/angular/css/palettes/dark.system.css';
+@import "@ionic/angular/css/palettes/dark.system.css";
+
+:root {
+  --app-bg: #f3f6fa;
+  --app-surface: #ffffff;
+  --app-border: #d6dde8;
+  --app-text: #14213d;
+  --app-muted: #667085;
+  --app-accent: #0057b8;
+  --app-accent-strong: #003f8a;
+  --app-success: #0c8f62;
+  --app-shadow: 0 4px 12px rgba(20, 33, 61, 0.06);
+  --app-banner-bg: var(--ion-color-warning);
+
+  --ion-background-color: var(--app-bg);
+  --ion-text-color: var(--app-text);
+  --ion-color-primary: var(--app-accent);
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-medium: var(--app-muted);
+  --ion-color-success: var(--app-success);
+  --ion-border-color: var(--app-border);
+  --ion-font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --app-bg: #000000;
+    --app-surface: #111c33;
+    --app-border: #000000;
+    --app-text: #e5eaf3;
+    --app-muted: #a4b0c4;
+    --app-accent: #5aa2ff;
+    --app-accent-strong: #86bbff;
+    --app-success: #34c38f;
+    --app-shadow: 0 8px 20px rgba(2, 6, 23, 0.45);
+    --app-banner-bg: #666666;
+  }
+}
+
+body {
+  background: var(--app-bg);
+  color: var(--app-text);
+}
+
+ion-content {
+  --background: var(--app-bg);
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 16px;
+  --padding-bottom: 26px;
+}
+
+ion-toolbar {
+  --background: var(--app-surface);
+  --color: var(--app-text);
+  --border-color: var(--app-border);
+}
+
+ion-title {
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+ion-list {
+  background: transparent !important;
+  padding: 4px !important;
+}
+
+ion-card {
+  border-radius: 10px;
+  box-shadow: 2px 3px 4px rgba(0, 0, 0, 0.282);
+  border: 1px solid var(--app-border);
+}

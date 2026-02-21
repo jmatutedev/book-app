@@ -1,27 +1,38 @@
-<app-header title="Búsqueda"></app-header>
+<app-header title="Busqueda"></app-header>
 
 <ion-content>
-  <ion-searchbar
-    #searchbar
-    placeholder="Buscar libros..."
-    inputmode="search"
-    clearInput
-    (ionChange)="onSearch($event)"
-    (ionClear)="onClear()"
-    mode="ios"
-  />
+  <section class="search-page__intro">
+    <p class="search-page__eyebrow">Explorador</p>
+    <h1 class="search-page__title">Busca libros</h1>
+    <p class="search-page__subtitle">
+      Escribe un titulo, autor o palabra clave y toca un libro para ver su
+      detalle.
+    </p>
+  </section>
+
+  <div class="search-page__searchbar-wrapper">
+    <ion-searchbar
+      class="search-page__searchbar"
+      #searchbar
+      placeholder="Buscar libros..."
+      inputmode="search"
+      clearInput
+      (ionChange)="onSearch($event)"
+      (ionClear)="onClear()"
+    />
+  </div>
 
   @if (loading) {
-  <div class="search__spinner">
+  <div class="search-page__spinner">
     <ion-spinner name="crescent" />
   </div>
   } @if (!loading && emptyState) {
   <app-empty-state [type]="emptyState" />
   } @if (!loading && books.length) {
-  <ion-grid>
+  <ion-grid class="search-page__grid">
     <ion-row>
       @for (book of books; track book.id) {
-      <ion-col size="6">
+      <ion-col size="6" class="search-page__col">
         <app-book-card [book]="book" (click)="goToDetail(book)" />
       </ion-col>
       }
@@ -32,8 +43,8 @@
     <ion-infinite-scroll-content loadingSpinner="crescent" />
   </ion-infinite-scroll>
   } @if (!loading && !emptyState && !books.length) {
-  <div class="search__placeholder">
-    <p>Escribe algo para buscar libros</p>
+  <div class="search-page__placeholder">
+    <p>Escribe algo para buscar libros.</p>
   </div>
   }
 </ion-content>

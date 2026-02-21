@@ -1,29 +1,43 @@
 <app-header [title]="listName" [showBackButton]="true"></app-header>
 
 <ion-content>
+  <section class="list-detail__intro">
+    <p class="list-detail__eyebrow">Lista personalizada</p>
+    <h1 class="list-detail__title">{{ listName }}</h1>
+    <p class="list-detail__subtitle">
+      @if (books.length) {
+        {{ books.length }} libro(s) en esta lista.
+      } @else {
+        Esta lista todavia no tiene libros.
+      }
+      Toca un libro para ver el detalle o usa el icono de papelera para quitarlo.
+    </p>
+  </section>
+
   @if (!books.length) {
-  <div class="list-detail__empty">
-    <ion-text color="medium">
-      <p>Esta lista no tiene libros aún.</p>
-      <p>Agregá libros desde el detalle de cada libro.</p>
-    </ion-text>
-  </div>
+    <section class="list-detail__empty">
+      <h2 class="list-detail__empty-title">Sin libros guardados</h2>
+      <p class="list-detail__empty-message">
+        Agrega libros desde el detalle de cada titulo para construir tu lista.
+      </p>
+    </section>
   } @if (books.length) {
-  <ion-list>
-    @for (book of books; track book.id) {
-    <ion-item button (click)="goToDetail(book)">
-      <ion-label>
-        <h2>{{ book.title }}</h2>
-        <p>{{ book.authors?.join(', ') ?? 'Autor desconocido' }}</p>
-      </ion-label>
-      <ion-icon
-        name="trash-outline"
-        slot="end"
-        color="danger"
-        (click)="removeBook(book, $event)"
-      />
-    </ion-item>
-    }
-  </ion-list>
+    <ion-list lines="none">
+      @for (book of books; track book.id) {
+        <ion-item button class="list-detail__item" (click)="goToDetail(book)">
+          <ion-label class="list-detail__item-label">
+            <h2>{{ book.title }}</h2>
+            <p>{{ book.authors?.join(', ') ?? 'Autor desconocido' }}</p>
+          </ion-label>
+          <ion-icon
+            class="list-detail__item-icon"
+            name="trash-outline"
+            slot="end"
+            color="danger"
+            (click)="removeBook(book, $event)"
+          />
+        </ion-item>
+      }
+    </ion-list>
   }
 </ion-content>

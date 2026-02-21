@@ -1,4 +1,41 @@
 .book-detail {
+  &__intro {
+    padding: 4px;
+    margin-bottom: 24px;
+  }
+
+  &__eyebrow {
+    margin: 0 0 8px;
+    color: var(--app-accent);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+  }
+
+  &__intro-title {
+    margin: 0;
+    font-size: 24px;
+    line-height: 1.2;
+    font-weight: 700;
+    color: var(--app-text);
+  }
+
+  &__intro-subtitle {
+    margin: 10px 0 0;
+    color: var(--app-muted);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  &__card {
+    background: var(--app-surface);
+    border: 1px solid var(--app-border);
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 2px 3px 4px rgba(0, 0, 0, 0.282);
+  }
+
   &__spinner {
     display: flex;
     justify-content: center;
@@ -8,17 +45,15 @@
   &__cover {
     position: relative;
     width: 100%;
-    height: 280px;
+    height: 310px;
     overflow: hidden;
-    background: var(--ion-color-light);
+    background: var(--app-bg);
+    border-bottom: 1px solid var(--app-border);
   }
 
   &__skeleton {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     margin: 0;
   }
 
@@ -30,6 +65,7 @@
     &--hidden {
       opacity: 0;
       position: absolute;
+      inset: 0;
     }
   }
 
@@ -39,8 +75,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--ion-color-medium);
+    color: var(--app-muted);
     font-size: 14px;
+    font-weight: 600;
   }
 
   &__body {
@@ -51,33 +88,36 @@
   }
 
   &__title {
-    font-size: 20px;
-    font-weight: 700;
     margin: 0;
+    font-size: 22px;
+    line-height: 1.25;
+    font-weight: 700;
+    color: var(--app-text);
   }
 
   &__authors {
-    font-size: 14px;
-    color: var(--ion-color-medium);
     margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--app-muted);
   }
 
   &__year {
+    margin: 2px 0 0;
     font-size: 13px;
-    color: var(--ion-color-medium);
-    margin: 0;
+    color: var(--app-muted);
   }
 
   &__description {
+    margin: 6px 0 0;
     font-size: 14px;
     line-height: 1.6;
-    margin-top: 8px;
+    color: var(--app-text);
   }
 
-  &__web-note {
-    font-size: 12px;
-    color: var(--ion-color-medium);
-    text-align: center;
-    margin: 0;
+  &__action {
+    margin-top: 8px;
+    --border-radius: 10px;
+    font-weight: 600;
   }
 }

@@ -1,36 +1,50 @@
 <app-header title="Mis listas"></app-header>
 
 <ion-content>
+  <section class="custom-lists__intro">
+    <p class="custom-lists__eyebrow">Organizacion</p>
+    <h1 class="custom-lists__title">Tus listas personalizadas</h1>
+    <p class="custom-lists__subtitle">
+      Crea, edita o elimina listas para organizar libros y toca una lista para ver su detalle.
+    </p>
+  </section>
+
   @if (!lists.length) {
-  <div class="custom-lists__empty">
-    <ion-text color="medium">
-      <p>No tenés listas aún. Creá una con el botón +</p>
-    </ion-text>
-  </div>
+    <section class="custom-lists__empty">
+      <h2 class="custom-lists__empty-title">Aun no tienes listas</h2>
+      <p class="custom-lists__empty-message">
+        Usa el boton + para crear tu primera lista personalizada.
+      </p>
+    </section>
   } @if (lists.length) {
-  <ion-list>
-    @for (list of lists; track list.id) {
-    <ion-item button (click)="goToDetail(list)">
-      <ion-label>{{ list.name }}</ion-label>
-      <ion-icon
-        name="create-outline"
-        slot="end"
-        color="primary"
-        (click)="editList(list, $event)"
-      />
-      <ion-icon
-        name="trash-outline"
-        slot="end"
-        color="danger"
-        (click)="deleteList(list, $event)"
-      />
-    </ion-item>
-    }
-  </ion-list>
+    <ion-list lines="none">
+      @for (list of lists; track list.id) {
+        <ion-item button class="custom-lists__item" (click)="goToDetail(list)">
+          <ion-label class="custom-lists__item-label">
+            <h2>{{ list.name }}</h2>
+            <p>Toca para ver los libros de esta lista</p>
+          </ion-label>
+          <ion-icon
+            class="custom-lists__item-icon custom-lists__item-icon--edit"
+            name="create-outline"
+            slot="end"
+            color="primary"
+            (click)="editList(list, $event)"
+          />
+          <ion-icon
+            class="custom-lists__item-icon custom-lists__item-icon--delete"
+            name="trash-outline"
+            slot="end"
+            color="danger"
+            (click)="deleteList(list, $event)"
+          />
+        </ion-item>
+      }
+    </ion-list>
   }
 
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-    <ion-fab-button (click)="createList()">
+    <ion-fab-button class="custom-lists__fab-button" (click)="createList()">
       <ion-icon name="add-outline" />
     </ion-fab-button>
   </ion-fab>

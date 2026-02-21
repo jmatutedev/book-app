@@ -1,0 +1,58 @@
+.genres-page__intro {
+  padding: 4px;
+}
+
+.genres-page__eyebrow {
+  margin: 0 0 8px;
+  color: var(--app-accent);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.genres-page__title {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: var(--app-text);
+}
+
+.genres-page__subtitle {
+  margin: 10px 0 0;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--app-muted);
+}
+
+.genres-page__item {
+  margin-bottom: 12px;
+  border: 1px solid var(--app-border);
+  border-radius: 10px !important;
+  box-shadow: 3px 4px 4px rgba(0, 0, 0, 0.08);
+
+  .genres-page__item-label {
+    margin: 12px 0;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--app-text);
+  }
+
+  p {
+    margin: 6px 0 0;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--app-muted);
+  }
+
+  .genres-page__item-icon {
+    color: var(--app-accent);
+    font-size: 18px;
+  }
+}

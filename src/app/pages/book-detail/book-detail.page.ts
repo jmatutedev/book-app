@@ -2,12 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
-  IonBackButton,
-  IonButtons,
   IonSpinner,
   IonButton,
   IonIcon,
@@ -122,7 +117,7 @@ export class BookDetailPage implements OnInit, OnDestroy {
     if (!lists.length) {
       const alert = await this.alertCtrl.create({
         header: 'Sin listas',
-        message: 'Primero creá una lista desde la sección "Mis listas".',
+        message: 'Primero crea una lista desde la sección "Mis listas".',
         buttons: [
           { text: 'Cancelar', role: 'cancel' },
           {
@@ -169,7 +164,6 @@ export class BookDetailPage implements OnInit, OnDestroy {
 
             this.alertCtrl.dismiss();
 
-            // Modal de confirmación en vez de toast
             const modal = await this.modalCtrl.create({
               component: AddedToListModalComponent,
               componentProps: {
@@ -177,8 +171,8 @@ export class BookDetailPage implements OnInit, OnDestroy {
                 listName: list.name,
                 listId: list.id,
               },
-              breakpoints: [0, 0.35],
-              initialBreakpoint: 0.35,
+              breakpoints: [0, 0.35, 0.5, 0.75],
+              initialBreakpoint: 0.5,
             });
             await modal.present();
 

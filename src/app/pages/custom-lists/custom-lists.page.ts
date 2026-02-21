@@ -1,9 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
   IonList,
   IonItem,
@@ -11,8 +8,8 @@ import {
   IonIcon,
   IonFab,
   IonFabButton,
-  IonText,
   AlertController,
+  ToastController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { addOutline, createOutline, trashOutline } from 'ionicons/icons';
@@ -36,7 +33,6 @@ const MAX_LISTS = 3;
     AppHeaderComponent,
     IonFab,
     IonFabButton,
-    IonText,
   ],
 })
 export class CustomListsPage implements OnInit {
@@ -46,6 +42,7 @@ export class CustomListsPage implements OnInit {
     private localListsService: LocalListsService,
     private alertCtrl: AlertController,
     private router: Router,
+    private toastCtrl: ToastController,
   ) {
     addIcons({ addOutline, createOutline, trashOutline });
   }
@@ -65,8 +62,8 @@ export class CustomListsPage implements OnInit {
   async createList(): Promise<void> {
     if (this.lists.length >= MAX_LISTS) {
       const alert = await this.alertCtrl.create({
-        header: 'Límite alcanzado',
-        message: `Solo podés crear hasta ${MAX_LISTS} listas.`,
+        header: 'Limite alcanzado',
+        message: `Solo puedes crear hasta ${MAX_LISTS} listas.`,
         buttons: ['OK'],
       });
       await alert.present();
@@ -142,7 +139,7 @@ export class CustomListsPage implements OnInit {
     event.stopPropagation();
     const alert = await this.alertCtrl.create({
       header: 'Eliminar lista',
-      message: `¿Estás seguro de que querés eliminar "${list.name}"?`,
+      message: `Estas seguro de que quieres eliminar "${list.name}"?`,
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
         {
@@ -151,6 +148,7 @@ export class CustomListsPage implements OnInit {
           handler: async () => {
             await this.localListsService.deleteList(list.id);
             await this.loadLists();
+            await this.showDeletedToast(list.name);
           },
         },
       ],
@@ -158,10 +156,20 @@ export class CustomListsPage implements OnInit {
     await alert.present();
   }
 
+  private async showDeletedToast(listName: string): Promise<void> {
+    const toast = await this.toastCtrl.create({
+      message: `Se elimino "${listName}" de tus listas.`,
+      duration: 2200,
+      position: 'bottom',
+      color: 'success',
+    });
+    await toast.present();
+  }
+
   private async showNameError(): Promise<void> {
     const alert = await this.alertCtrl.create({
-      header: 'Nombre inválido',
-      message: 'El nombre no puede estar vacío.',
+      header: 'Nombre invalido',
+      message: 'El nombre no puede estar vacio.',
       buttons: ['OK'],
     });
     await alert.present();
