@@ -18,9 +18,12 @@ Esta es una aplicación móvil híbrida desarrollada con **Ionic Angular** para 
 git clone https://github.com/jmatutedev/book-app.git
 
 ```
-cd book-app
 
-````
+```bash
+cd book-app
+```
+
+`````
 
 2. **Instalar dependencias**:
 ```bash
