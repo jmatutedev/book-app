@@ -1,11 +1,4 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button />
-    </ion-buttons>
-    <ion-title>Detalle</ion-title>
-  </ion-toolbar>
-</ion-header>
+<app-header title="Detalle" [showBackButton]="true"></app-header>
 
 <ion-content>
   @if (loading) {
@@ -38,14 +31,18 @@
 
     @if (book.first_publish_year) {
     <p class="book-detail__year">{{ book.first_publish_year }}</p>
-    } @if (book.description) {
-    <p class="book-detail__description">{{ book.description }}</p>
     }
 
+    <p class="book-detail__description">
+      {{ book.description ?? 'Sin descripción disponible.' }}
+    </p>
+
+    @if (!fromList) {
     <ion-button expand="block" (click)="addToList()">
       <ion-icon slot="start" name="bookmark-outline" />
       Agregar a lista
     </ion-button>
+    }
   </div>
   }
 </ion-content>

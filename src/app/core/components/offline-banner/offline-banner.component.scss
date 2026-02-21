@@ -1,0 +1,12 @@
+:host {
+  display: block;
+}
+
+.offline-banner {
+  background: var(--ion-color-warning);
+  color: var(--ion-color-warning-contrast);
+  text-align: center;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 4px 16px;
+}

@@ -1,36 +1,5 @@
 <div class="empty-state">
-  @switch (type) {
-    @case ("offline") {
-      <ion-icon name="cloud-offline-outline" class="empty-state__icon" />
-      <ion-text color="medium"
-        ><p class="empty-state__label">
-          {{ message ?? "Sin conexión a internet" }}
-        </p></ion-text
-      >
-    }
-    @case ("no-data") {
-      <ion-icon name="cloud-offline-outline" class="empty-state__icon" />
-      <ion-text color="medium"
-        ><p class="empty-state__label">
-          {{ message ?? "No hay datos guardados" }}
-        </p></ion-text
-      >
-    }
-    @case ("error") {
-      <ion-icon name="alert-circle-outline" class="empty-state__icon" />
-      <ion-text color="medium"
-        ><p class="empty-state__label">
-          {{ message ?? "Ocurrió un error" }}
-        </p></ion-text
-      >
-    }
-    @case ("no-results") {
-      <ion-icon name="search-outline" class="empty-state__icon" />
-      <ion-text color="medium"
-        ><p class="empty-state__label">
-          {{ message ?? "Sin resultados" }}
-        </p></ion-text
-      >
-    }
-  }
+  <ion-icon class="empty-state__icon" [name]="icon" />
+  <p class="empty-state__title">{{ title }}</p>
+  <p class="empty-state__message">{{ message ?? defaultMessage }}</p>
 </div>

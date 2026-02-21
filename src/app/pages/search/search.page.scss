@@ -1,0 +1,37 @@
+.search {
+  &__spinner {
+    display: flex;
+    justify-content: center;
+    padding: 48px 0;
+  }
+
+  &__placeholder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50vh;
+    color: var(--ion-color-medium);
+    font-size: 14px;
+
+    p {
+      margin: 0;
+    }
+  }
+}
+
+ion-col {
+  display: flex;
+  align-items: stretch;
+
+  app-book-card {
+    width: 100%;
+  }
+}
+
+ion-toolbar {
+  position: relative;
+}
+
+ion-searchbar {
+  --padding-end: 76px;
+}

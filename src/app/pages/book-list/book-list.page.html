@@ -1,11 +1,4 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/genres" />
-    </ion-buttons>
-    <ion-title>{{ genreLabel }}</ion-title>
-  </ion-toolbar>
-</ion-header>
+<app-header title="Libros" [showBackButton]="true"></app-header>
 
 <ion-content>
   @if (loading) {

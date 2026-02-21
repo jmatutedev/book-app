@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import {
   IonHeader,
   IonToolbar,
@@ -12,13 +13,18 @@ import {
   IonIcon,
   IonSkeletonText,
   AlertController,
+  ModalController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { bookmarkOutline } from 'ionicons/icons';
 import { BookSyncService } from '../../core/services/book-sync/book-sync.service';
-import { CustomListsDbService } from '../../core/services/database/custom-list-db.service';
+import { NetworkService } from '../../core/services/network/network.service';
 import { Book } from '../../core/models/books/book.model';
 import { EmptyStateComponent } from '../../core/components/empty-state/empty-state.component';
+import { LocalListsService } from '../../core/services/web-list/web-lists.service';
+import { AddedToListModalComponent } from '../../core/components/list-modal/list-modal.component';
+import { AppHeaderComponent } from '../../core/components/header/header.component';
+
 const COVER_BASE = 'https://covers.openlibrary.org/b/id';
 
 @Component({
@@ -27,39 +33,52 @@ const COVER_BASE = 'https://covers.openlibrary.org/b/id';
   styleUrls: ['./book-detail.page.scss'],
   standalone: true,
   imports: [
-    IonHeader,
-    IonToolbar,
-    IonTitle,
     IonContent,
-    IonBackButton,
-    IonButtons,
     IonSpinner,
     IonButton,
     IonIcon,
     IonSkeletonText,
     EmptyStateComponent,
+    AppHeaderComponent,
   ],
 })
-export class BookDetailPage implements OnInit {
+export class BookDetailPage implements OnInit, OnDestroy {
   book: Book | null = null;
   loading = false;
   error = false;
-
   imageLoaded = false;
   imageError = false;
 
+  // Oculta el botón si venimos desde list-detail
+  fromList = false;
+
+  private bookId!: string;
+  private networkSub!: Subscription;
+
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private bookSync: BookSyncService,
-    private listsDb: CustomListsDbService,
+    private localListsService: LocalListsService,
+    private network: NetworkService,
     private alertCtrl: AlertController,
+    private modalCtrl: ModalController,
   ) {
     addIcons({ bookmarkOutline });
   }
 
   ngOnInit(): void {
-    const bookId = this.route.snapshot.paramMap.get('bookId')!;
-    this.loadDetail(bookId);
+    this.bookId = this.route.snapshot.paramMap.get('bookId')!;
+    this.fromList = history.state?.fromList ?? false;
+    this.loadDetail(this.bookId);
+
+    this.networkSub = this.network.onlineStatus$.subscribe((isOnline) => {
+      if (isOnline && this.error) this.loadDetail(this.bookId);
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.networkSub?.unsubscribe();
   }
 
   async loadDetail(bookId: string): Promise<void> {
@@ -67,7 +86,6 @@ export class BookDetailPage implements OnInit {
     this.error = false;
     this.imageLoaded = false;
     this.imageError = false;
-
     try {
       this.book = await this.bookSync.getBookDetail(bookId);
       if (!this.book) this.error = true;
@@ -91,7 +109,6 @@ export class BookDetailPage implements OnInit {
   onImageLoad(): void {
     this.imageLoaded = true;
   }
-
   onImageError(): void {
     this.imageError = true;
     this.imageLoaded = true;
@@ -100,13 +117,19 @@ export class BookDetailPage implements OnInit {
   async addToList(): Promise<void> {
     if (!this.book) return;
 
-    const lists = await this.listsDb.getLists();
+    const lists = await this.localListsService.getLists();
 
     if (!lists.length) {
       const alert = await this.alertCtrl.create({
         header: 'Sin listas',
-        message: 'Primero crea una lista desde la sección "Mis listas".',
-        buttons: ['OK'],
+        message: 'Primero creá una lista desde la sección "Mis listas".',
+        buttons: [
+          { text: 'Cancelar', role: 'cancel' },
+          {
+            text: 'Ir a Mis listas',
+            handler: () => this.router.navigate(['/custom-lists']),
+          },
+        ],
       });
       await alert.present();
       return;
@@ -125,7 +148,8 @@ export class BookDetailPage implements OnInit {
           text: 'Agregar',
           handler: async (listId: string) => {
             if (!listId || !this.book) return;
-            const alreadyIn = await this.listsDb.isBookInList(
+
+            const alreadyIn = await this.localListsService.isBookInList(
               listId,
               this.book.id,
             );
@@ -138,12 +162,36 @@ export class BookDetailPage implements OnInit {
               await info.present();
               return;
             }
-            await this.listsDb.addBookToList(listId, this.book);
+
+            await this.localListsService.addBookToList(listId, this.book);
+
+            const list = lists.find((l) => l.id === listId)!;
+
+            this.alertCtrl.dismiss();
+
+            // Modal de confirmación en vez de toast
+            const modal = await this.modalCtrl.create({
+              component: AddedToListModalComponent,
+              componentProps: {
+                bookTitle: this.book.title,
+                listName: list.name,
+                listId: list.id,
+              },
+              breakpoints: [0, 0.35],
+              initialBreakpoint: 0.35,
+            });
+            await modal.present();
+
+            const { data } = await modal.onWillDismiss();
+            if (data?.goToList) {
+              this.router.navigate(['/custom-lists', list.id], {
+                state: { name: list.name },
+              });
+            }
           },
         },
       ],
     });
-
     await alert.present();
   }
 }

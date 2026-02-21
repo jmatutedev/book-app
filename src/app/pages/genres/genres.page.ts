@@ -12,20 +12,13 @@ import {
 import { addIcons } from 'ionicons';
 import { chevronForwardOutline } from 'ionicons/icons';
 import { GENRES, Genre } from '../../core/models/genre/genre.model';
+import { AppHeaderComponent } from 'src/app/core/components/header/header.component';
 
 @Component({
   selector: 'app-genres',
   templateUrl: './genres.page.html',
   standalone: true,
-  imports: [
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonContent,
-    IonList,
-    IonItem,
-    IonLabel,
-  ],
+  imports: [IonContent, IonList, IonItem, IonLabel, AppHeaderComponent],
 })
 export class GenresPage {
   readonly genres: Genre[] = GENRES;

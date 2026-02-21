@@ -1,0 +1,35 @@
+.modal {
+  &__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 46px;
+    text-align: center;
+    gap: 8px;
+  }
+
+  &__icon {
+    font-size: 56px;
+    margin-bottom: 8px;
+  }
+
+  &__title {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  &__message {
+    font-size: 14px;
+    color: var(--ion-color-medium);
+    margin: 0 0 8px;
+    line-height: 1.5;
+  }
+
+  &__buttons {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+}

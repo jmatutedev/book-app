@@ -1,13 +1,12 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import {
   IonHeader,
   IonToolbar,
   IonTitle,
   IonContent,
-  IonBackButton,
-  IonButtons,
+  IonSearchbar,
   IonGrid,
   IonRow,
   IonCol,
@@ -23,16 +22,18 @@ import {
   EmptyStateComponent,
   EmptyStateType,
 } from '../../core/components/empty-state/empty-state.component';
-import { AppHeaderComponent } from '../../core/components/header/header.component';
+import { AppHeaderComponent } from 'src/app/core/components/header/header.component';
+
 const PAGE_SIZE = 20;
 
 @Component({
-  selector: 'app-book-list',
-  templateUrl: './book-list.page.html',
-  styleUrls: ['./book-list.page.scss'],
+  selector: 'app-search',
+  templateUrl: './search.page.html',
+  styleUrls: ['./search.page.scss'],
   standalone: true,
   imports: [
     IonContent,
+    IonSearchbar,
     IonGrid,
     IonRow,
     IonCol,
@@ -44,10 +45,8 @@ const PAGE_SIZE = 20;
     AppHeaderComponent,
   ],
 })
-export class BookListPage implements OnInit, OnDestroy {
-  genreId!: string;
-  genreLabel!: string;
-
+export class SearchPage implements OnDestroy {
+  query = '';
   books: Book[] = [];
   page = 1;
 
@@ -57,52 +56,54 @@ export class BookListPage implements OnInit, OnDestroy {
   private networkSub!: Subscription;
 
   constructor(
-    private route: ActivatedRoute,
     private router: Router,
     private bookSync: BookSyncService,
     private network: NetworkService,
   ) {}
 
-  ngOnInit(): void {
-    this.genreId = this.route.snapshot.paramMap.get('genreId')!;
-    this.genreLabel = history.state?.label ?? 'Libros';
-    this.loadBooks();
-
-    this.networkSub = this.network.onlineStatus$.subscribe((isOnline) => {
-      if (
-        isOnline &&
-        (this.emptyState === 'offline' || this.emptyState === 'no-data')
-      ) {
-        this.page = 1;
-        this.books = [];
-        this.loadBooks();
-      }
-    });
-  }
-
   ngOnDestroy(): void {
     this.networkSub?.unsubscribe();
   }
 
-  async loadBooks(): Promise<void> {
+  // Dispara con Enter del teclado nativo o con el botón de búsqueda
+  onSearch(event: any): void {
+    const value = event.detail.value?.trim() ?? '';
+    if (!value || value === this.query) return;
+
+    this.query = value;
+    this.books = [];
+    this.page = 1;
+    this.emptyState = null;
+    this.search();
+  }
+
+  onClear(): void {
+    this.query = '';
+    this.books = [];
+    this.page = 1;
+    this.emptyState = null;
+  }
+
+  async search(): Promise<void> {
+    if (!this.query) return;
+
+    if (!this.network.isOnline()) {
+      this.emptyState = 'offline';
+      return;
+    }
+
     this.loading = true;
     this.emptyState = null;
 
     try {
-      const result = await this.bookSync.getBooksByGenre(
-        this.genreId,
-        this.page,
-      );
-
+      const result = await this.bookSync.searchBooks(this.query, this.page);
       if (!result.length) {
-        // Sin conexión y sin datos locales
-        this.emptyState = this.network.isOnline() ? 'no-results' : 'no-data';
+        this.emptyState = 'no-results';
       } else {
         this.books = result;
       }
     } catch {
-      // Distinguimos si es falta de red o error real de API
-      this.emptyState = this.network.isOnline() ? 'error' : 'offline';
+      this.emptyState = 'error';
     } finally {
       this.loading = false;
     }
@@ -111,10 +112,7 @@ export class BookListPage implements OnInit, OnDestroy {
   async loadMore(event: any): Promise<void> {
     this.page++;
     try {
-      const result = await this.bookSync.getBooksByGenre(
-        this.genreId,
-        this.page,
-      );
+      const result = await this.bookSync.searchBooks(this.query, this.page);
       this.books = [...this.books, ...result];
       if (result.length < PAGE_SIZE) {
         event.target.disabled = true;

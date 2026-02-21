@@ -1,6 +1,8 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { IonCard, IonSkeletonText } from '@ionic/angular/standalone';
+import { Subscription } from 'rxjs';
 import { Book } from '../../models/books/book.model';
+import { NetworkService } from '../../services/network/network.service';
 
 const COVER_BASE = 'https://covers.openlibrary.org/b/id';
 
@@ -11,16 +13,35 @@ const COVER_BASE = 'https://covers.openlibrary.org/b/id';
   standalone: true,
   imports: [IonCard, IonSkeletonText],
 })
-export class BookCardComponent {
+export class BookCardComponent implements OnInit, OnDestroy {
   @Input({ required: true }) book!: Book;
 
-  imageLoaded = false;
-  imageError = false;
+  imageLoaded: boolean = false;
+  imageError: boolean = false;
+  cacheBuster: string = '';
+
+  private networkSub!: Subscription;
+
+  constructor(private network: NetworkService) {}
+
+  ngOnInit(): void {
+    this.networkSub = this.network.onlineStatus$.subscribe((isOnline) => {
+      if (isOnline && this.imageError) {
+        // Forzamos al browser a reintentar la imagen con un timestamp
+        this.imageError = false;
+        this.imageLoaded = false;
+        this.cacheBuster = `?t=${Date.now()}`;
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.networkSub?.unsubscribe();
+  }
 
   get coverUrl(): string | null {
-    return this.book.cover_id
-      ? `${COVER_BASE}/${this.book.cover_id}-M.jpg`
-      : null;
+    if (!this.book.cover_id) return null;
+    return `${COVER_BASE}/${this.book.cover_id}-M.jpg${this.cacheBuster}`;
   }
 
   get authorsLabel(): string {

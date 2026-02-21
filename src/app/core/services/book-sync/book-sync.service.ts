@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
 import { OpenLibraryService } from '../api/open-library.service';
 import { BooksDbService } from '../database/books-db.service';
 import { NetworkService } from '../network/network.service';
@@ -8,6 +9,7 @@ import { Book } from '../../models/books/book.model';
   providedIn: 'root',
 })
 export class BookSyncService {
+  private readonly isNative = Capacitor.isNativePlatform();
   private genreCache = new Map<string, Book[]>();
   private detailCache = new Map<string, Book>();
 
@@ -24,11 +26,12 @@ export class BookSyncService {
     if (this.network.isOnline()) {
       const books = await this.api.fetchBooksByGenre(genreId, page);
       this.genreCache.set(key, books);
-      await this.booksDb.saveBooksForGenre(genreId, books);
+      if (this.isNative) await this.booksDb.saveBooksForGenre(genreId, books);
       return books;
     }
 
-    return this.booksDb.getBooksByGenre(genreId);
+    if (this.isNative) return this.booksDb.getBooksByGenre(genreId);
+    return [];
   }
 
   async searchBooks(query: string, page: number): Promise<Book[]> {
@@ -47,10 +50,11 @@ export class BookSyncService {
         this.detailCache.set(bookId, book);
         return book;
       } catch {
-        // Si la API falla caemos a SQLite
+        // Si la API falla intentamos SQLite en nativo
       }
     }
 
-    return this.booksDb.getBookById(bookId);
+    if (this.isNative) return this.booksDb.getBookById(bookId);
+    return null;
   }
 }

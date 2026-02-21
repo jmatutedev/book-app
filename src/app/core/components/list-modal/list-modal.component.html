@@ -1,0 +1,22 @@
+<ion-content class="modal">
+  <div class="modal__content">
+    <ion-icon
+      class="modal__icon"
+      name="checkmark-circle-outline"
+      color="success"
+    />
+    <p class="modal__title">¡Libro agregado!</p>
+    <p class="modal__message">
+      <strong>{{ bookTitle }}</strong> fue agregado a la lista
+      <strong>{{ listName }}</strong
+      >.
+    </p>
+    <div class="modal__buttons">
+      <ion-button expand="block" (click)="goToList()"> Ver lista </ion-button>
+
+      <ion-button expand="block" fill="outline" (click)="dismiss()">
+        Continuar
+      </ion-button>
+    </div>
+  </div>
+</ion-content>
