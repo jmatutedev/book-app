@@ -32,7 +32,7 @@
     </ion-row>
   </ion-grid>
 
-  <ion-infinite-scroll (ionInfinite)="loadMore($event)">
+  <ion-infinite-scroll [disabled]="infiniteScrollDisabled" (ionInfinite)="loadMore($event)">
     <ion-infinite-scroll-content loadingSpinner="crescent" />
   </ion-infinite-scroll>
   }

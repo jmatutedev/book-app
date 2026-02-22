@@ -51,6 +51,12 @@
     color: var(--app-muted);
   }
 
+  &__spinner {
+    display: grid;
+    place-items: center;
+    padding: 28px 0;
+  }
+
   &__item {
     --inner-border-width: 0;
     --border-width: 0;

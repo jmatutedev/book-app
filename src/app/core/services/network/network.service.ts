@@ -1,15 +1,15 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Network } from '@capacitor/network';
 import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
-export class NetworkService {
+export class NetworkService implements OnDestroy {
   private online = true;
-  readonly onlineStatus$ = new Subject<boolean>();
+  private pollInterval!: ReturnType<typeof setInterval>;
 
-  // Promesa que resuelve cuando el estado inicial ya fue consultado
+  readonly onlineStatus$ = new Subject<boolean>();
   readonly ready: Promise<void>;
 
   constructor() {
@@ -20,17 +20,20 @@ export class NetworkService {
     const status = await Network.getStatus();
     this.online = status.connected;
 
-    // Actualiza el estado ante cambios de conectividad
     Network.addListener('networkStatusChange', (status) => {
       this.updateStatus(status.connected);
     });
 
-    setInterval(async () => {
+    this.pollInterval = setInterval(async () => {
       const current = await Network.getStatus();
       if (current.connected !== this.online) {
         this.updateStatus(current.connected);
       }
     }, 3000);
+  }
+
+  ngOnDestroy(): void {
+    clearInterval(this.pollInterval);
   }
 
   private updateStatus(connected: boolean): void {

@@ -1,7 +1,7 @@
 .book-detail {
   &__intro {
     padding: 4px;
-    margin-bottom: 24px;
+    margin-bottom: 16px;
   }
 
   &__eyebrow {
@@ -34,6 +34,7 @@
     overflow: hidden;
     border-radius: 10px;
     box-shadow: 2px 3px 4px rgba(0, 0, 0, 0.282);
+    margin-bottom: 20px;
   }
 
   &__spinner {

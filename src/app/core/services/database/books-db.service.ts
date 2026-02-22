@@ -15,7 +15,10 @@ export class BooksDbService {
     const db = this.databaseService.getDb();
 
     const statements = books.map((book) => ({
-      statement: `INSERT OR REPLACE INTO books (id, data) VALUES (?, ?)`,
+      statement: `
+        INSERT INTO books (id, data) VALUES (?, ?)
+        ON CONFLICT(id) DO UPDATE SET data = excluded.data
+      `,
       values: [
         toWorkKey(book.id),
         JSON.stringify({ ...book, id: toWorkKey(book.id) }),
@@ -56,7 +59,8 @@ export class BooksDbService {
     const res = await db.query(
       `SELECT b.data FROM books b
        INNER JOIN genre_books gb ON b.id = gb.book_id
-       WHERE gb.genre_id = ?`,
+       WHERE gb.genre_id = ?
+       ORDER BY gb.rowid ASC`,
       [genreId],
     );
     if (!res.values?.length) return [];

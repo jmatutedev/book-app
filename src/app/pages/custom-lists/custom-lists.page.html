@@ -9,14 +9,18 @@
     </p>
   </section>
 
-  @if (!lists.length) {
+  @if (loadingLists) {
+    <div class="custom-lists__spinner">
+      <ion-spinner name="crescent" />
+    </div>
+  } @if (!loadingLists && !lists.length) {
     <section class="custom-lists__empty">
       <h2 class="custom-lists__empty-title">Aun no tienes listas</h2>
       <p class="custom-lists__empty-message">
         Usa el boton + para crear tu primera lista personalizada.
       </p>
     </section>
-  } @if (lists.length) {
+  } @if (!loadingLists && lists.length) {
     <ion-list lines="none">
       @for (list of lists; track list.id) {
         <ion-item button class="custom-lists__item" (click)="goToDetail(list)">

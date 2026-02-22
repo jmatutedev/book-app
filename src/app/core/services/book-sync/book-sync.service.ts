@@ -6,6 +6,8 @@ import { Book } from '../../models/books/book.model';
 import { StorageFacadeService } from '../storage/storage-facade.service';
 import { toWorkKey } from '../../utils/open-library-id.util';
 
+const PAGE_SIZE = 20;
+
 @Injectable({
   providedIn: 'root',
 })
@@ -21,17 +23,20 @@ export class BookSyncService {
   ) {}
 
   async getBooksByGenre(genreId: string, page: number): Promise<Book[]> {
-    const key = `${genreId}_${page}`;
-    if (this.genreCache.has(key)) return this.genreCache.get(key)!;
-
     if (this.network.isOnline()) {
+      const key = `${genreId}_${page}`;
+      if (this.genreCache.has(key)) return this.genreCache.get(key)!;
       const books = await this.api.fetchBooksByGenre(genreId, page);
       this.genreCache.set(key, books);
       if (this.isNative) await this.storage.saveBooksForGenre(genreId, books);
       return books;
     }
 
-    if (this.isNative) return this.storage.getBooksByGenre(genreId);
+    if (this.isNative) {
+      const allBooks = await this.storage.getBooksByGenre(genreId);
+      const offset = (page - 1) * PAGE_SIZE;
+      return allBooks.slice(offset, offset + PAGE_SIZE);
+    }
     return [];
   }
 

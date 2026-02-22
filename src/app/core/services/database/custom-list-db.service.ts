@@ -11,16 +11,21 @@ import {
   providedIn: 'root',
 })
 export class CustomListsDbService {
+  private listsCache: CustomList[] | null = null;
+
   constructor(private databaseService: DatabaseService) {}
 
   async getLists(): Promise<CustomList[]> {
     if (!this.databaseService.isAvailable()) return [];
+    if (this.listsCache) return [...this.listsCache];
     await this.databaseService.ready;
     const db = this.databaseService.getDb();
 
     const res = await db.query(`SELECT id, name FROM custom_lists`);
     if (!res.values?.length) return [];
-    return res.values.map((row) => ({ id: row.id, name: row.name }));
+    const lists = res.values.map((row) => ({ id: row.id, name: row.name }));
+    this.listsCache = lists;
+    return [...lists];
   }
 
   async createList(list: CustomList): Promise<void> {
@@ -40,6 +45,7 @@ export class CustomListsDbService {
       list.id,
       list.name.trim(),
     ]);
+    this.listsCache = null;
   }
 
   async updateListName(listId: string, newName: string): Promise<void> {
@@ -55,6 +61,7 @@ export class CustomListsDbService {
       newName.trim(),
       listId,
     ]);
+    this.listsCache = null;
   }
 
   async deleteList(listId: string): Promise<void> {
@@ -62,6 +69,7 @@ export class CustomListsDbService {
     await this.databaseService.ready;
     const db = this.databaseService.getDb();
     await db.run(`DELETE FROM custom_lists WHERE id = ?`, [listId]);
+    this.listsCache = null;
   }
 
   async getBooksInList(listId: string): Promise<Book[]> {
@@ -116,4 +124,3 @@ export class CustomListsDbService {
     return (res.values?.length ?? 0) > 0;
   }
 }
-

@@ -9,6 +9,7 @@ import {
   IonItem,
   IonLabel,
   IonList,
+  IonSpinner,
   ToastController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -31,6 +32,7 @@ const MAX_LISTS = getMaxLists();
     IonItem,
     IonLabel,
     IonIcon,
+    IonSpinner,
     AppHeaderComponent,
     IonFab,
     IonFabButton,
@@ -38,6 +40,7 @@ const MAX_LISTS = getMaxLists();
 })
 export class CustomListsPage implements OnInit {
   lists: CustomList[] = [];
+  loadingLists = true;
 
   constructor(
     private storage: StorageFacadeService,
@@ -57,7 +60,12 @@ export class CustomListsPage implements OnInit {
   }
 
   async loadLists(): Promise<void> {
-    this.lists = await this.storage.getLists();
+    this.loadingLists = true;
+    try {
+      this.lists = await this.storage.getLists();
+    } finally {
+      this.loadingLists = false;
+    }
   }
 
   async createList(): Promise<void> {

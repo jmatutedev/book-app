@@ -1,13 +1,13 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import {
+  IonCol,
   IonContent,
   IonGrid,
-  IonRow,
-  IonCol,
   IonInfiniteScroll,
   IonInfiniteScrollContent,
+  IonRow,
   IonSpinner,
 } from '@ionic/angular/standalone';
 import { BookSyncService } from '../../core/services/book-sync/book-sync.service';
@@ -20,6 +20,7 @@ import {
 } from '../../core/components/empty-state/empty-state.component';
 import { AppHeaderComponent } from '../../core/components/header/header.component';
 import { toWorkSlug } from '../../core/utils/open-library-id.util';
+
 const PAGE_SIZE = 20;
 
 @Component({
@@ -45,7 +46,8 @@ export class BookListPage implements OnInit, OnDestroy {
   genreLabel!: string;
 
   books: Book[] = [];
-  page: number = 1;
+  page = 1;
+  infiniteScrollDisabled = false;
 
   loading = false;
   emptyState: EmptyStateType | null = null;
@@ -65,14 +67,16 @@ export class BookListPage implements OnInit, OnDestroy {
     this.loadBooks();
 
     this.networkSub = this.network.onlineStatus$.subscribe((isOnline) => {
-      if (
-        isOnline &&
-        (this.emptyState === 'offline' || this.emptyState === 'no-data')
-      ) {
-        this.page = 1;
-        this.books = [];
+      if (!isOnline) return;
+      this.emptyState = null;
+
+      if (!this.books.length) {
+        this.resetPagination();
         this.loadBooks();
+        return;
       }
+
+      this.infiniteScrollDisabled = false;
     });
   }
 
@@ -85,20 +89,18 @@ export class BookListPage implements OnInit, OnDestroy {
     this.emptyState = null;
 
     try {
-      const result = await this.bookSync.getBooksByGenre(
-        this.genreId,
-        this.page,
-      );
+      const result = await this.bookSync.getBooksByGenre(this.genreId, this.page);
 
       if (!result.length) {
-        // Sin conexión y sin datos locales
         this.emptyState = this.network.isOnline() ? 'no-results' : 'no-data';
+        this.infiniteScrollDisabled = true;
       } else {
         this.books = result;
+        this.infiniteScrollDisabled = result.length < PAGE_SIZE;
       }
     } catch {
-      // Distinguimos si es falta de red o error real de API
       this.emptyState = this.network.isOnline() ? 'error' : 'offline';
+      this.infiniteScrollDisabled = true;
     } finally {
       this.loading = false;
     }
@@ -107,14 +109,9 @@ export class BookListPage implements OnInit, OnDestroy {
   async loadMore(event: any): Promise<void> {
     this.page++;
     try {
-      const result = await this.bookSync.getBooksByGenre(
-        this.genreId,
-        this.page,
-      );
-      this.books = [...this.books, ...result];
-      if (result.length < PAGE_SIZE) {
-        event.target.disabled = true;
-      }
+      const result = await this.bookSync.getBooksByGenre(this.genreId, this.page);
+      this.books = this.mergeUniqueBooks(this.books, result);
+      this.infiniteScrollDisabled = result.length < PAGE_SIZE;
     } catch {
       this.page--;
     } finally {
@@ -125,5 +122,25 @@ export class BookListPage implements OnInit, OnDestroy {
   goToDetail(book: Book): void {
     (document.activeElement as HTMLElement)?.blur();
     this.router.navigate(['/book-detail', toWorkSlug(book.id)]);
+  }
+
+  private resetPagination(): void {
+    this.page = 1;
+    this.books = [];
+    this.infiniteScrollDisabled = false;
+  }
+
+  private mergeUniqueBooks(current: Book[], incoming: Book[]): Book[] {
+    if (!incoming.length) return current;
+    const ids = new Set(current.map((book) => book.id));
+    const merged = [...current];
+
+    for (const book of incoming) {
+      if (ids.has(book.id)) continue;
+      ids.add(book.id);
+      merged.push(book);
+    }
+
+    return merged;
   }
 }
