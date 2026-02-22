@@ -121,6 +121,49 @@ Se implementó una gestión centralizada de estados para mejorar la UX:
 
 ---
 
+## 🗄️ Inspeccionar la Base de Datos SQLite
+
+Es posible inspeccionar el archivo de base de datos generado por la aplicación en Android usando un programa externo. A continuación se explica cómo hacerlo de forma sencilla.
+
+---
+## 🎥 Video Demo
+
+Puedes ver la aplicación en acción aquí:  
+👉 [Ver Demo en YouTube](https://youtu.be/v1V4mUFWtCU)
+
+El video muestra la navegación por géneros, búsqueda de libros, gestión de listas personalizadas y funcionamiento en modo offline con persistencia local (LocalStorage y SQLite).
+
+---
+
+### Paso 1: Extraer el archivo `.db` desde Android Studio
+
+Con el emulador o dispositivo corriendo la app, sigue estos pasos en Android Studio:
+
+1. Ve al menú **View > Tool Windows > Device Explorer**  
+2. Navega a la siguiente ruta dentro del sistema de archivos del emulador:
+3. Ahí encontrarás el archivo `.db` generado por la app (`books_appSQLite.db`).  
+4. Haz clic derecho sobre el archivo y selecciona **Save As...** para descargarlo a tu computadora.
+
+---
+
+### Paso 2: Abrir el archivo con SQLite Viewer
+
+La herramienta más sencilla para visualizar archivos `.db` es **SQLite Viewer**, una aplicación web gratuita que no requiere instalación:  
+👉 https://sqliteviewer.app  
+
+5. Abre el sitio en tu navegador.  
+6. Arrastra el archivo `.db` descargado directamente a la página, o usa el botón **Open File**.  
+7. Verás todas las tablas de la base de datos y podrás explorar los registros directamente desde el navegador.
+
+---
+
+> **Nota:** Todo el procesamiento es local en tu navegador; el archivo nunca se sube a ningún servidor.
+>Imagen de ejemplo de la base de datos:
+
+![image]([https://user-images.githubusercontent.com/XXXXX/XXXXX.png](https://postimg.cc/ct3Pph3K))
+
+---
+
 ## 📚 Librerías Utilizadas
 
 - **@ionic/angular**: Framework de UI para componentes móviles.
