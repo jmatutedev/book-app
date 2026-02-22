@@ -121,11 +121,6 @@ Se implementó una gestión centralizada de estados para mejorar la UX:
 
 ---
 
-## 🗄️ Inspeccionar la Base de Datos SQLite
-
-Es posible inspeccionar el archivo de base de datos generado por la aplicación en Android usando un programa externo. A continuación se explica cómo hacerlo de forma sencilla.
-
----
 ## 🎥 Video Demo
 
 Puedes ver la aplicación en acción aquí:  
@@ -134,6 +129,9 @@ Puedes ver la aplicación en acción aquí:
 El video muestra la navegación por géneros, búsqueda de libros, gestión de listas personalizadas y funcionamiento en modo offline con persistencia local (LocalStorage y SQLite).
 
 ---
+## 🗄️ Inspeccionar la Base de Datos SQLite
+
+Es posible inspeccionar el archivo de base de datos generado por la aplicación en Android usando un programa externo. A continuación se explica cómo hacerlo de forma sencilla.
 
 ### Paso 1: Extraer el archivo `.db` desde Android Studio
 
