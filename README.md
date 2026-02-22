@@ -8,7 +8,7 @@ Esta es una aplicación móvil híbrida desarrollada con **Ionic Angular** para 
 
 Si deseas probar la aplicación en un dispositivo físico o emulador sin configurar el entorno de desarrollo, puedes descargar el APK pre-compilado directamente desde la sección de Releases:
 
-👉 **[DESCARGAR APK (v1.0.0)](https://github.com/jmatutedev/book-app/releases/download/Book-App/app-debug.apk)**
+👉 **[DESCARGAR APK (v1.0.0)](https://github.com/jmatutedev/book-app/releases/download/Book-App/book-app.apk)**
 
 *Nota: Al ser una versión de depuración (debug), es posible que Android muestre un aviso de "Desarrollador desconocido". Puede ignorarlo e instalar con total seguridad.*
 
