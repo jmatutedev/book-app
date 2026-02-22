@@ -13,14 +13,16 @@
     <div class="custom-lists__spinner">
       <ion-spinner name="crescent" />
     </div>
-  } @if (!loadingLists && !lists.length) {
+  } @else if (loadError) {
+    <app-empty-state type="error" message="No se pudieron cargar tus listas." />
+  } @else if (!lists.length) {
     <section class="custom-lists__empty">
       <h2 class="custom-lists__empty-title">Aun no tienes listas</h2>
       <p class="custom-lists__empty-message">
         Usa el boton + para crear tu primera lista personalizada.
       </p>
     </section>
-  } @if (!loadingLists && lists.length) {
+  } @else {
     <ion-list lines="none">
       @for (list of lists; track list.id) {
         <ion-item button class="custom-lists__item" (click)="goToDetail(list)">

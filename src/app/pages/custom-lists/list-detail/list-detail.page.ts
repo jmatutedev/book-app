@@ -6,6 +6,7 @@ import {
   IonItem,
   IonLabel,
   IonIcon,
+  IonSpinner,
   AlertController,
   ToastController,
 } from '@ionic/angular/standalone';
@@ -15,18 +16,30 @@ import { Book } from '../../../core/models/books/book.model';
 import { StorageFacadeService } from '../../../core/services/storage/storage-facade.service';
 import { AppHeaderComponent } from '../../../core/components/header/header.component';
 import { toWorkSlug } from '../../../core/utils/open-library-id.util';
+import { EmptyStateComponent } from '../../../core/components/empty-state/empty-state.component';
 
 @Component({
   selector: 'app-list-detail',
   templateUrl: './list-detail.page.html',
   styleUrls: ['./list-detail.page.scss'],
   standalone: true,
-  imports: [IonContent, IonList, IonItem, IonLabel, IonIcon, AppHeaderComponent],
+  imports: [
+    IonContent,
+    IonList,
+    IonItem,
+    IonLabel,
+    IonIcon,
+    IonSpinner,
+    AppHeaderComponent,
+    EmptyStateComponent,
+  ],
 })
 export class ListDetailPage implements OnInit {
   listId!: string;
   listName!: string;
   books: Book[] = [];
+  loading: boolean = false;
+  error: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -45,7 +58,16 @@ export class ListDetailPage implements OnInit {
   }
 
   async loadBooks(): Promise<void> {
-    this.books = await this.storage.getBooksInList(this.listId);
+    this.loading = true;
+    this.error = false;
+    try {
+      this.books = await this.storage.getBooksInList(this.listId);
+    } catch {
+      this.error = true;
+      this.books = [];
+    } finally {
+      this.loading = false;
+    }
   }
 
   async removeBook(book: Book, event: Event): Promise<void> {

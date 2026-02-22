@@ -6,7 +6,7 @@ import { Subject } from 'rxjs';
   providedIn: 'root',
 })
 export class NetworkService implements OnDestroy {
-  private online = true;
+  private online = false;
   private pollInterval!: ReturnType<typeof setInterval>;
 
   readonly onlineStatus$ = new Subject<boolean>();

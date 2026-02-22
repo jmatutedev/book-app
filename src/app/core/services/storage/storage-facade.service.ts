@@ -39,6 +39,13 @@ export class StorageFacadeService {
     await this.booksDb.saveBooks([{ ...book, id: toWorkKey(book.id) }]);
   }
 
+  async saveBooks(books: Book[]): Promise<void> {
+    if (!this.isNative) return;
+    await this.booksDb.saveBooks(
+      books.map((book) => ({ ...book, id: toWorkKey(book.id) })),
+    );
+  }
+
   async getLists(): Promise<CustomList[]> {
     if (this.isNative) return this.customListsDb.getLists();
     return this.localLists.getLists();

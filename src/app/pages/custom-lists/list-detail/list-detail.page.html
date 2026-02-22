@@ -14,14 +14,20 @@
     </p>
   </section>
 
-  @if (!books.length) {
+  @if (loading) {
+    <div class="custom-lists__spinner">
+      <ion-spinner name="crescent" />
+    </div>
+  } @else if (error) {
+    <app-empty-state type="error" message="No se pudieron cargar los libros de esta lista." />
+  } @else if (!books.length) {
     <section class="list-detail__empty">
       <h2 class="list-detail__empty-title">Sin libros guardados</h2>
       <p class="list-detail__empty-message">
         Agrega libros desde el detalle de cada titulo para construir tu lista.
       </p>
     </section>
-  } @if (books.length) {
+  } @else {
     <ion-list lines="none">
       @for (book of books; track book.id) {
         <ion-item button class="list-detail__item" (click)="goToDetail(book)">

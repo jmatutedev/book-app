@@ -79,10 +79,11 @@ export class OpenLibraryService {
       authors,
       cover_id: res.covers?.[0],
       first_publish_year: this.resolveFirstPublishYear(res),
-      description:
+      description: this.cleanDescription(
         typeof res.description === 'string'
           ? res.description
           : res.description?.value,
+      ),
     };
   }
 
@@ -144,5 +145,24 @@ export class OpenLibraryService {
     }
 
     return undefined;
+  }
+
+  private cleanDescription(raw: string | undefined): string | undefined {
+    if (!raw) return raw;
+
+    const cleaned = raw
+      // Markdown links: [label](url) -> label
+      .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '$1')
+      // Any remaining plain URLs
+      .replace(/https?:\/\/\S+/g, '')
+      // Decorative separators like ---------- 
+      .replace(/-{3,}/g, ' ')
+      // Normalize spaces/new lines
+      .replace(/[ \t]+\n/g, '\n')
+      .replace(/\n{3,}/g, '\n\n')
+      .replace(/[ \t]{2,}/g, ' ')
+      .trim();
+
+    return cleaned || undefined;
   }
 }

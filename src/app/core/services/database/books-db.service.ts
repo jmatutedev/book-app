@@ -14,15 +14,24 @@ export class BooksDbService {
     await this.databaseService.ready;
     const db = this.databaseService.getDb();
 
-    const statements = books.map((book) => ({
+    const statements = await Promise.all(books.map(async (book) => {
+      const normalizedId = toWorkKey(book.id);
+      const existing = await this.getStoredBookData(normalizedId);
+      const merged = this.mergeBookData(existing, {
+        ...book,
+        id: normalizedId,
+      });
+
+      return {
       statement: `
         INSERT INTO books (id, data) VALUES (?, ?)
         ON CONFLICT(id) DO UPDATE SET data = excluded.data
       `,
       values: [
-        toWorkKey(book.id),
-        JSON.stringify({ ...book, id: toWorkKey(book.id) }),
+        normalizedId,
+        JSON.stringify(merged),
       ],
+      };
     }));
     await db.executeSet(statements);
   }
@@ -65,5 +74,31 @@ export class BooksDbService {
     );
     if (!res.values?.length) return [];
     return res.values.map((row) => JSON.parse(row.data));
+  }
+
+  private async getStoredBookData(bookId: string): Promise<Book | null> {
+    const db = this.databaseService.getDb();
+    const res = await db.query(`SELECT data FROM books WHERE id = ?`, [bookId]);
+    if (!res.values?.length) return null;
+    return JSON.parse(res.values[0].data);
+  }
+
+  private mergeBookData(existing: Book | null, incoming: Book): Book {
+    if (!existing) return incoming;
+
+    return {
+      ...existing,
+      ...incoming,
+      id: incoming.id,
+      title: incoming.title || existing.title,
+      authors:
+        incoming.authors && incoming.authors.length
+          ? incoming.authors
+          : existing.authors,
+      cover_id: incoming.cover_id ?? existing.cover_id,
+      first_publish_year:
+        incoming.first_publish_year ?? existing.first_publish_year,
+      description: incoming.description ?? existing.description,
+    };
   }
 }

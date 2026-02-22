@@ -60,7 +60,7 @@ export class BookDetailPage implements OnInit, OnDestroy {
     this.loadDetail(this.bookId);
 
     this.networkSub = this.network.onlineStatus$.subscribe((isOnline) => {
-      if (isOnline && this.error) this.loadDetail(this.bookId);
+      if (isOnline) this.loadDetail(this.bookId);
     });
   }
 

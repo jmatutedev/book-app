@@ -9,6 +9,7 @@ import {
   IonInfiniteScrollContent,
   IonRow,
   IonSpinner,
+  ToastController,
 } from '@ionic/angular/standalone';
 import { BookSyncService } from '../../core/services/book-sync/book-sync.service';
 import { NetworkService } from '../../core/services/network/network.service';
@@ -46,10 +47,10 @@ export class BookListPage implements OnInit, OnDestroy {
   genreLabel!: string;
 
   books: Book[] = [];
-  page = 1;
-  infiniteScrollDisabled = false;
+  page: number = 1;
+  infiniteScrollDisabled: boolean = false;
 
-  loading = false;
+  loading: boolean = false;
   emptyState: EmptyStateType | null = null;
 
   private networkSub!: Subscription;
@@ -59,6 +60,7 @@ export class BookListPage implements OnInit, OnDestroy {
     private router: Router,
     private bookSync: BookSyncService,
     private network: NetworkService,
+    private toastCtrl: ToastController,
   ) {}
 
   ngOnInit(): void {
@@ -89,7 +91,10 @@ export class BookListPage implements OnInit, OnDestroy {
     this.emptyState = null;
 
     try {
-      const result = await this.bookSync.getBooksByGenre(this.genreId, this.page);
+      const result = await this.bookSync.getBooksByGenre(
+        this.genreId,
+        this.page,
+      );
 
       if (!result.length) {
         this.emptyState = this.network.isOnline() ? 'no-results' : 'no-data';
@@ -109,11 +114,15 @@ export class BookListPage implements OnInit, OnDestroy {
   async loadMore(event: any): Promise<void> {
     this.page++;
     try {
-      const result = await this.bookSync.getBooksByGenre(this.genreId, this.page);
+      const result = await this.bookSync.getBooksByGenre(
+        this.genreId,
+        this.page,
+      );
       this.books = this.mergeUniqueBooks(this.books, result);
       this.infiniteScrollDisabled = result.length < PAGE_SIZE;
     } catch {
       this.page--;
+      await this.showLoadMoreError();
     } finally {
       event.target.complete();
     }
@@ -142,5 +151,15 @@ export class BookListPage implements OnInit, OnDestroy {
     }
 
     return merged;
+  }
+
+  private async showLoadMoreError(): Promise<void> {
+    const toast = await this.toastCtrl.create({
+      message: 'No se pudieron cargar mas libros.',
+      duration: 2200,
+      position: 'bottom',
+      color: 'warning',
+    });
+    await toast.present();
   }
 }

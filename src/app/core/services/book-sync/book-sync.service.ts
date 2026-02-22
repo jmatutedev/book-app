@@ -23,7 +23,7 @@ export class BookSyncService {
   ) {}
 
   async getBooksByGenre(genreId: string, page: number): Promise<Book[]> {
-    if (this.network.isOnline()) {
+    if (await this.isOnlineSafe()) {
       const key = `${genreId}_${page}`;
       if (this.genreCache.has(key)) return this.genreCache.get(key)!;
       const books = await this.api.fetchBooksByGenre(genreId, page);
@@ -41,17 +41,19 @@ export class BookSyncService {
   }
 
   async searchBooks(query: string, page: number): Promise<Book[]> {
-    if (!this.network.isOnline()) {
+    if (!(await this.isOnlineSafe())) {
       throw new Error('Sin conexión. La búsqueda requiere internet.');
     }
-    return this.api.searchBooks(query, page);
+    const books = await this.api.searchBooks(query, page);
+    if (this.isNative) await this.storage.saveBooks(books);
+    return books;
   }
 
   async getBookDetail(bookId: string): Promise<Book | null> {
     const workKey = toWorkKey(bookId);
     if (this.detailCache.has(workKey)) return this.detailCache.get(workKey)!;
 
-    if (this.network.isOnline()) {
+    if (await this.isOnlineSafe()) {
       try {
         const book = await this.api.fetchBookDetail(workKey);
         if (this.isNative) await this.storage.saveBook(book);
@@ -64,5 +66,10 @@ export class BookSyncService {
 
     if (this.isNative) return this.storage.getBookById(workKey);
     return null;
+  }
+
+  private async isOnlineSafe(): Promise<boolean> {
+    await this.network.ready;
+    return this.network.isOnline();
   }
 }

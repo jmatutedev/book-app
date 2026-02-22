@@ -18,6 +18,7 @@ import { AppHeaderComponent } from '../../core/components/header/header.componen
 import { CustomList } from '../../core/models/custom-list/custom-list.model';
 import { StorageFacadeService } from '../../core/services/storage/storage-facade.service';
 import { getMaxLists } from '../../core/utils/list-name-validation.util';
+import { EmptyStateComponent } from '../../core/components/empty-state/empty-state.component';
 
 const MAX_LISTS = getMaxLists();
 
@@ -36,11 +37,13 @@ const MAX_LISTS = getMaxLists();
     AppHeaderComponent,
     IonFab,
     IonFabButton,
+    EmptyStateComponent,
   ],
 })
 export class CustomListsPage implements OnInit {
   lists: CustomList[] = [];
-  loadingLists = true;
+  loadingLists: boolean = true;
+  loadError: boolean = false;
 
   constructor(
     private storage: StorageFacadeService,
@@ -61,8 +64,12 @@ export class CustomListsPage implements OnInit {
 
   async loadLists(): Promise<void> {
     this.loadingLists = true;
+    this.loadError = false;
     try {
       this.lists = await this.storage.getLists();
+    } catch {
+      this.loadError = true;
+      this.lists = [];
     } finally {
       this.loadingLists = false;
     }
