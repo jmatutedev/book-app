@@ -124,7 +124,7 @@ Se implementó una gestión centralizada de estados para mejorar la UX:
 ## 🎥 Video Demo
 
 Puedes ver la aplicación en acción aquí:  
-👉 [Ver Demo en YouTube](https://youtu.be/v1V4mUFWtCU)
+👉 <a href="https://youtu.be/v1V4mUFWtCU" target="_blank">Ver Demo en YouTube</a>
 
 El video muestra la navegación por géneros, búsqueda de libros, gestión de listas personalizadas y funcionamiento en modo offline con persistencia local (LocalStorage y SQLite).
 
@@ -158,7 +158,9 @@ La herramienta más sencilla para visualizar archivos `.db` es **SQLite Viewer**
 > **Nota:** Todo el procesamiento es local en tu navegador; el archivo nunca se sube a ningún servidor.
 >Imagen de ejemplo de la base de datos:
 
-![image](https://i.postimg.cc/pVRd4gw3/image.png)
+<a href="https://i.postimg.cc/pVRd4gw3/image.png" target="_blank">
+  <img src="https://i.postimg.cc/pVRd4gw3/image.png" alt="Database preview" />
+</a>
 
 ---
 
