@@ -14,18 +14,20 @@ Esta es una aplicación móvil híbrida desarrollada con **Ionic Angular** para 
 ### Pasos iniciales
 
 1. **Clonar el repositorio**:
-   ```bash
-   git clone https://github.com/jmatutedev/book-app.git
-   cd book-app
-   ```
+```bash
+git clone https://github.com/jmatutedev/book-app.git
 
-````
+```
+
+```bash
+cd book-app
+```
 
 2. **Instalar dependencias**:
 ```bash
 npm install
 
-````
+```
 
 ### Ejecutar en Web (Navegador)
 
