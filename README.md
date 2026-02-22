@@ -4,6 +4,14 @@ Esta es una aplicación móvil híbrida desarrollada con **Ionic Angular** para 
 
 ## 🚀 Cómo correr el proyecto
 
+### 📱 Ejecución Rápida (Recomendado)
+
+Si deseas probar la aplicación en un dispositivo físico o emulador sin configurar el entorno de desarrollo, puedes descargar el APK pre-compilado directamente desde la sección de Releases:
+
+👉 **[DESCARGAR APK (v1.0.0)](https://github.com/jmatutedev/book-app/releases/download/Book-App/book-app.apk)**
+
+*Nota: Al ser una versión de depuración (debug), es posible que Android muestre un aviso de "Desarrollador desconocido". Puede ignorarlo e instalar con total seguridad.*
+
 ### Prerrequisitos
 
 - **Node.js**: v18 o superior.
@@ -79,6 +87,7 @@ ionic cap open android
 - **Exploración por Géneros**: Navega entre 4 géneros literarios definidos para ver libros de forma paginada.
 - **Búsqueda Global**: Localiza cualquier libro por título, autor o palabra clave sin filtros de género.
 - **Detalle del Libro**: Visualiza información relevante (portada, autor, año, descripción).
+- Soporte de Modo Oscuro: La interfaz incluye estilos optimizados para Dark Mode, adaptándose automáticamente a la configuración del sistema del usuario para una lectura más cómoda.
 - **Listas Personalizadas**:
 - Crea hasta **3 listas** con nombres únicos.
 - Edita o elimina listas existentes.
