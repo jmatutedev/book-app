@@ -87,6 +87,7 @@ ionic cap open android
 - **Exploración por Géneros**: Navega entre 4 géneros literarios definidos para ver libros de forma paginada.
 - **Búsqueda Global**: Localiza cualquier libro por título, autor o palabra clave sin filtros de género.
 - **Detalle del Libro**: Visualiza información relevante (portada, autor, año, descripción).
+- Soporte de Modo Oscuro: La interfaz incluye estilos optimizados para Dark Mode, adaptándose automáticamente a la configuración del sistema del usuario para una lectura más cómoda.
 - **Listas Personalizadas**:
 - Crea hasta **3 listas** con nombres únicos.
 - Edita o elimina listas existentes.
