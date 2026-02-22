@@ -158,7 +158,7 @@ La herramienta más sencilla para visualizar archivos `.db` es **SQLite Viewer**
 > **Nota:** Todo el procesamiento es local en tu navegador; el archivo nunca se sube a ningún servidor.
 >Imagen de ejemplo de la base de datos:
 
-![image]([[https://user-images.githubusercontent.com/XXXXX/XXXXX.png](https://postimg.cc/ct3Pph3K)](https://i.postimg.cc/pVRd4gw3/image.png))
+![image](https://i.postimg.cc/pVRd4gw3/image.png)
 
 ---
 
